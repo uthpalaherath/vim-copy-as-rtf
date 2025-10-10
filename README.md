@@ -10,8 +10,11 @@ ships with vim.
 
 ## Requirements
 
-* OS X
 * The `:TOhtml` plugin, which ships with vim and is enabled by default
+* One of the following environments:
+  - Microsoft Windows (with PowerShell)
+  - macOS (with `pbcopy` and `textutil`)
+  - X11 (with `xclip`)
 
 ## Installation
 
