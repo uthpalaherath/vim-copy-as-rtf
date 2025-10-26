@@ -44,6 +44,49 @@ else
   finish
 endif
 
+" Force HTML body/background to white in the HTML buffer produced by TOhtml
+function! s:ForceWhiteBackgroundHTML()
+  if !exists('g:copy_as_rtf_force_white_bg') || !g:copy_as_rtf_force_white_bg
+    return
+  endif
+
+  " Assume current buffer is the HTML buffer created by tohtml#Convert2HTML().
+  " We'll perform a few defensive substitutions to make the body/background white.
+  " Use 'silent' to avoid messages interfering with plugin flow.
+
+  " 1) Replace body bgcolor="..." with bgcolor="white"
+  silent %s/\(<body[^>]*\)\v(bgcolor\s*=\s*")[^"]*(")/\1\2white\3/ge
+
+  " 2) Remove any body inline style that sets background or add white if missing:
+  "   remove background declarations inside style attributes
+  silent %s/\v(background(-color)?\s*:\s*[^;"]+;?)/background-color: white;/ge
+
+  " 3) If <style> block or external CSS has body { background: ... } replace it
+  silent %s/\v(body\s*\{[^}]*\})/\=substitute(submatch(0), '\vbackground[^;:}]+;?', 'background-color: white;', 'g')/ge
+
+  " 4) Ensure there's an explicit inline body style with white background if none exists
+  " If <body ...> has no style attr add one with white background
+  if match(getline(1, '$')->join("\n"), '<body[^>]*style=') == -1
+    " Add style attribute after <body...> start tag
+    " We do a substitution on first occurrence of <body ...>
+    silent 1,%s/\(<body\([^>]*\)\)>/\=submatch(0) =~ 'style=' ? submatch(0) : substitute(submatch(0), '>$', ' style="background-color: white;">', '')/e
+  endif
+
+  " 5) As a last resort, append a <style> block near the top that forces white body background
+  if match(getline(1, 40)->join("\n"), 'body\s*\{[^}]*background-color') == -1
+    " insert a small style block after the <head> tag if present, otherwise at top
+    let l:headline = search('<head\>', 'nw')
+    if l:headline > 0
+      call append(l:headline, ['<style type="text/css">', '  body { background-color: white !important; }', '</style>'])
+    else
+      call append(0, ['<style type="text/css">', '  body { background-color: white !important; }', '</style>'])
+    endif
+  endif
+
+  " Ensure buffer changed (so TOhtml's buffer content is what we modified)
+  silent noautocmd write
+endfunction
+
 " copy the current buffer or selected text as RTF
 "
 " bufnr - the buffer number of the current buffer
@@ -67,6 +110,7 @@ function! s:CopyRTF(bufnr, line1, line2)
       call s:RemoveCommonIndentation(a:line1, a:line2)
     endif
     call tohtml#Convert2HTML(a:line1, a:line2)
+    call s:ForceWhiteBackgroundHTML()
     call Copy_as_RTF()
 
     silent bd!
@@ -106,6 +150,7 @@ function! s:CopyRTF(bufnr, line1, line2)
     endif
 
     call tohtml#Convert2HTML(1, line('$'))
+    call s:ForceWhiteBackgroundHTML()
     call s:Copy_as_RTF()
     silent bd!
     silent bd!
