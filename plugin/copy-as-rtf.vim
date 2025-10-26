@@ -76,6 +76,10 @@ function! s:CopyRTF(bufnr, line1, line2)
     " open a new scratch buffer
     let orig_ft = &ft
     let l:orig_bg = &background
+    let l:orig_bg = &background
+    if exists('g:copy_as_rtf_force_light_bg') && g:copy_as_rtf_force_light_bg
+      set background=light
+    endif
     let l:orig_nu = &number
     let l:orig_nuw = &numberwidth
     if exists("b:is_bash")
