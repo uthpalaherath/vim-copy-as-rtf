@@ -81,11 +81,15 @@ function! s:CopyRTF(bufnr, line1, line2)
     " restore original background immediately
     let &background = l:_saved_bg
 
-    " Force white background in generated HTML
+    " Force white background and desired font in generated HTML
     if &filetype ==# 'html'
+      " Ensure white background
       silent! %s/\v(background(-color)?:)[^;"}]+/\1 white/ge
       silent! %s/\v(bgcolor\s*=\s*")[^"]+/\1white/ge
       silent! %s/\v<body(?![^>]*background-color)[^>]*>/\0 style="background-color:white;"/ge
+
+      " Inject font family and size styling
+      silent! %s#</head>#<style>body, pre, code { font-family: Monaco, monospace; font-size: 15pt; }</style></head>#e
     endif
 
     " proceed with copying (TOhtml created the HTML buffer so conversion will use light bg)
@@ -130,11 +134,15 @@ function! s:CopyRTF(bufnr, line1, line2)
     call tohtml#Convert2HTML(1, line('$'))
     let &background = l:_saved_bg
 
-    " Force white background in generated HTML
+    " Force white background and desired font in generated HTML
     if &filetype ==# 'html'
+      " Ensure white background
       silent! %s/\v(background(-color)?:)[^;"}]+/\1 white/ge
       silent! %s/\v(bgcolor\s*=\s*")[^"]+/\1white/ge
       silent! %s/\v<body(?![^>]*background-color)[^>]*>/\0 style="background-color:white;"/ge
+
+      " Inject font family and size styling
+      silent! %s#</head>#<style>body, pre, code { font-family: Monaco, monospace; font-size: 15pt; }</style></head>#e
     endif
 
     " Now copy and close scratch buffers as before
