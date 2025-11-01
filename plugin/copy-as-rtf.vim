@@ -76,8 +76,12 @@ function! s:CopyRTF(bufnr, line1, line2)
     " ensure TOhtml uses CSS
     let g:html_use_css = 1
     set background=light
+    " disable line numbers
+    let l:_saved_nu = &number
+    set nonumber
     " convert only the selected range
     call tohtml#Convert2HTML(a:line1, a:line2)
+    let &number = l:_saved_nu
     " restore original background immediately
     let &background = l:_saved_bg
 
@@ -131,7 +135,13 @@ function! s:CopyRTF(bufnr, line1, line2)
     let l:_saved_bg = &background
     let g:html_use_css = 1
     set background=light
+    " disable line numbers
+    let l:_saved_nu = &number
+    set nonumber
+    " convert only the selected range
     call tohtml#Convert2HTML(1, line('$'))
+    let &number = l:_saved_nu
+
     let &background = l:_saved_bg
 
     " Force white background and desired font in generated HTML
