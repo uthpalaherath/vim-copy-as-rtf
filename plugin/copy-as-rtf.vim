@@ -35,27 +35,28 @@ if has('win32') && has('clipboard')
     silent exec '!start /min powershell -noprofile "gcb | scb -as"'
   endfunction
 
-" Unix (X11 / Wayland)
+" Unixy path (X11 / Wayland / macOS handled later)
 elseif has('unix')
   " Prefer wl-copy on Wayland when WAYLAND_DISPLAY is set
   if exists('$WAYLAND_DISPLAY') && executable('wl-copy')
     function s:Copy_as_RTF()
+      " wl-copy supports specifying MIME type
       silent exe '%!wl-copy --type text/html -'
     endfunction
 
-  " Prefer xclip on X11
+  " Prefer xclip on X11 (supports -t "text/html")
   elseif executable('xclip')
     function s:Copy_as_RTF()
       silent exe '%!xclip -selection clipboard -t "text/html" -i'
     endfunction
 
-  " If no X11 xclip but wl-copy exists (headless Wayland or mixed env)
+  " If no X11 xclip but wl-copy exists (headless Wayland or mixed env), use it
   elseif executable('wl-copy')
     function s:Copy_as_RTF()
       silent exe '%!wl-copy --type text/html -'
     endfunction
 
-  " Fallback to xsel (note: plain text only)
+  " Fallback to xsel (note: plain text only — no text/html target)
   elseif executable('xsel')
     function s:Copy_as_RTF()
       if !exists('g:copy_as_rtf_silence_on_errors') || g:copy_as_rtf_silence_on_errors == 0
