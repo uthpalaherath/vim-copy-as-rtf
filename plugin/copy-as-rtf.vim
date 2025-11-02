@@ -40,7 +40,7 @@ elseif has('x11') && executable('xclip')
   endfunction
 elseif executable('pbcopy') && executable('textutil')
   function s:Copy_as_RTF()
-    silent exe '%!textutil -convert rtf -stdin -stdout | pbcopy'
+    silent exe '%!textutil -convert rtf -font "SFMono Nerd Font" -stdin -stdout | pbcopy'
   endfunction
 else
   if !exists('g:copy_as_rtf_silence_on_errors') || g:copy_as_rtf_silence_on_errors == 0
