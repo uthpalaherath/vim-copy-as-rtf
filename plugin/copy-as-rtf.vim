@@ -93,7 +93,7 @@ function! s:CopyRTF(bufnr, line1, line2)
       silent! %s/\v<body(?![^>]*background-color)[^>]*>/\0 style="background-color:white;"/ge
 
       " Inject font family and size styling
-      silent! %s#</head>#<style>body, pre, code { font-family: SFMono Nerd Font, Monaco, monospace; font-size: 10.5pt; }</style></head>#e
+      silent! %s#</head>#<style>body, pre, code { font-family: "SFMono Nerd Font", "Monaco", "monospace"; font-size: 10.5pt; }</style></head>#e
     endif
 
     " proceed with copying (TOhtml created the HTML buffer so conversion will use light bg)
@@ -152,7 +152,7 @@ function! s:CopyRTF(bufnr, line1, line2)
       silent! %s/\v<body(?![^>]*background-color)[^>]*>/\0 style="background-color:white;"/ge
 
       " Inject font family and size styling
-      silent! %s#</head>#<style>body, pre, code { font-family: SFMono Nerd Font, Monaco, monospace; font-size: 10.5pt; }</style></head>#e
+      silent! %s#</head>#<style>body, pre, code { font-family: "SFMono Nerd Font", "Monaco", "monospace"; font-size: 10.5pt; }</style></head>#e
     endif
 
     " Now copy and close scratch buffers as before
