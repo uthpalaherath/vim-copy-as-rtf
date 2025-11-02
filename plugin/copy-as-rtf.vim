@@ -40,7 +40,7 @@ elseif has('x11') && executable('xclip')
   endfunction
 elseif executable('pbcopy') && executable('textutil')
   function s:Copy_as_RTF()
-    silent exe '%!textutil -convert rtf -font "SFMono Nerd Font" -stdin -stdout | pbcopy'
+    silent exe '%!textutil -convert rtf -stdin -stdout | pbcopy'
   endfunction
 else
   if !exists('g:copy_as_rtf_silence_on_errors') || g:copy_as_rtf_silence_on_errors == 0
@@ -93,7 +93,7 @@ function! s:CopyRTF(bufnr, line1, line2)
       silent! %s/\v<body(?![^>]*background-color)[^>]*>/\0 style="background-color:white;"/ge
 
       " Inject font family and size styling
-      silent! %s#</head>#<style>body, pre, code { font-family: "SFMono Nerd Font", "SF Mono", "SFMono-Regular", Menlo, Monaco, "Courier New", monospace; font-size: 10.5pt; }</style></head>#e
+      silent! %s#</head>#<style>body, pre, code { font-family: Monaco, monospace; font-size: 10.5pt; }</style></head>#e
     endif
 
     " proceed with copying (TOhtml created the HTML buffer so conversion will use light bg)
@@ -152,7 +152,7 @@ function! s:CopyRTF(bufnr, line1, line2)
       silent! %s/\v<body(?![^>]*background-color)[^>]*>/\0 style="background-color:white;"/ge
 
       " Inject font family and size styling
-      silent! %s#</head>#<style>body, pre, code { font-family: "SFMono Nerd Font", "SF Mono", "SFMono-Regular", Menlo, Monaco, "Courier New", monospace; font-size: 10.5pt; }</style></head>#e
+      silent! %s#</head>#<style>body, pre, code { font-family: Monaco, monospace; font-size: 10.5pt; }</style></head>#e
     endif
 
     " Now copy and close scratch buffers as before
